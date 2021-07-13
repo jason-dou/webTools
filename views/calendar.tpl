@@ -70,24 +70,44 @@
             top: 0px;
             left: 0px;
         }
+
+        th, td {
+            text-align: center;
+        }
+
+        table, th, td {
+            border: 1px solid black;
+            border-collapse: collapse;
+        }
     </style>
 </head>
 
 <body>
 <header>
     <h1 class="logo">My Personal Calendar</h1>
-    <div class="description">
-        This is my personal calendar
+    <div>
+        <table style="width:100%">
+            <tr>
+                <th>Id</th>
+                <th>Description</th>
+                <th>Location</th>
+                <th>Attendee</th>
+                <th>Time</th>
+            </tr>
+            {{range $key, $val := .Events}}
+            <tr>
+                <td>{{$val.Id}}</td>
+                <td>{{$val.Description}}</td>
+                <td>{{$val.Location}}</td>
+                <td>{{$val.Attendee}}</td>
+                <td>{{$val.Time}}</td>
+            </tr>
+
+            {{end}}
+        </table>
+
     </div>
 </header>
-<footer>
-    <div class="author">
-        Official website:
-        <a href="http://{{.Website}}">{{.Website}}</a> /
-        Contact me:
-        <a class="email" href="mailto:{{.Email}}">{{.Email}}</a>
-    </div>
-</footer>
 <div class="backdrop"></div>
 
 <script src="/static/js/reload.min.js"></script>
