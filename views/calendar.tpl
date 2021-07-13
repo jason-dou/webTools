@@ -51,11 +51,6 @@
             color: #999;
         }
 
-        .description {
-            text-align: center;
-            font-size: 16px;
-        }
-
         a {
             color: #444;
             text-decoration: none;
@@ -101,15 +96,26 @@
                 <td>{{$val.Location}}</td>
                 <td>{{$val.Attendee}}</td>
                 <td>{{$val.Time}}</td>
+                <td><button onclick="deleteCalendarEvent({{$val.Id}})">delete</button></td>
             </tr>
 
             {{end}}
         </table>
-
     </div>
-</header>
-<div class="backdrop"></div>
+    <div>
+        <form id="calendar-event" action="/calendar" method="post">
+            Description：<input name="description" type="text" /><br>
+            Location：<input name="location" type="text" /><br>
+            Attendee：<input name="attendee" type="text" /><br>
+            Time：<input name="time" type="datetime-local" /><br>
+            <input type="submit" value="submit" />
+        </form>
+    </div>
 
+</header>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="/static/js/calendar.js"></script>
 <script src="/static/js/reload.min.js"></script>
 </body>
 </html>

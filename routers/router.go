@@ -7,6 +7,6 @@ import (
 
 func init() {
 	web.Router("/", &controllers.IndexController{})
-    web.Router("/calendar", &controllers.CalendarController{}, "get:GetAll")
-	web.Router("/calendar/:id", &controllers.CalendarController{}, "get:GetById")
+    web.Router("/calendar", &controllers.CalendarController{}, "get:GetAll;post:CreateCalendarEvent")
+	web.Router("/calendar/:id", &controllers.CalendarController{}, "get:GetById;delete:DeleteCalendarEvent")
 }

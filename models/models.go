@@ -7,10 +7,10 @@ import (
 
 type CalendarEvent struct {
 	Id				string `orm:"column(id);pk"` // Set the primary key
-	Description		string
-	Location		string
-	Attendee		string
-	Time			time.Time
+	Description		string `form:"description"`
+	Location		string `form:"location"`
+	Attendee		string `form:"attendee"`
+	Time			time.Time `form:"time"`
 }
 
 func init() {

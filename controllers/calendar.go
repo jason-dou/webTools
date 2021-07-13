@@ -17,23 +17,15 @@ type CalendarController struct {
 }
 
 func (cc *CalendarController) GetAll() {
-	cm := new(managers.CalendarManagerImpl)
-	events, err := cm.GetAllEvents()
-	if err == nil {
-		cc.Data["Events"] = events
-		cc.TplName = "calendar.tpl"
-	} else {
-		fmt.Println(err)
-		cc.handleError(err)
-	}
+	cc.loadPage()
 }
 
-// GetById is @router /calendar/:id
+// GetById is @router GET /calendar/:id
 func (cc *CalendarController) GetById() {
-	cm := new(managers.CalendarManagerImpl)
+	calendarManager := new(managers.CalendarManagerImpl)
 	id := cc.Ctx.Input.Param(":id")
 	fmt.Println(id)
-	event, err := cm.GetCalendarEventById(id)
+	event, err := calendarManager.GetCalendarEventById(id)
 	if err == nil {
 		response := CalendarEventResponse{
 			CalendarEvents: []models.CalendarEvent{event},
@@ -41,6 +33,46 @@ func (cc *CalendarController) GetById() {
 		fmt.Println(response)
 		cc.Data["json"] = &response
 		cc.ServeJSON()
+	} else {
+		fmt.Println(err)
+		cc.handleError(err)
+	}
+}
+
+// CreateCalendarEvent is @router POST /calendar
+func (cc *CalendarController) CreateCalendarEvent() {
+	calendarManager := new(managers.CalendarManagerImpl)
+	calendarEvent := models.CalendarEvent{}
+	cc.ParseForm(&calendarEvent)
+
+	createErr := calendarManager.CreateCalendarEvent(calendarEvent)
+	if createErr == nil {
+		cc.loadPage()
+	} else {
+		fmt.Println(createErr)
+		cc.handleError(createErr)
+	}
+}
+
+// DeleteCalendarEvent is @router DELETE /calendar/:id
+func (cc *CalendarController) DeleteCalendarEvent() {
+	calendarManager := new(managers.CalendarManagerImpl)
+	id := cc.Ctx.Input.Param(":id")
+	deleteError := calendarManager.DeleteCalendarEvent(id)
+	if deleteError != nil {
+		fmt.Println(deleteError)
+		cc.handleError(deleteError)
+	} else {
+		cc.Abort(Success)
+	}
+}
+
+func (cc *CalendarController) loadPage() {
+	calendarManager := new(managers.CalendarManagerImpl)
+	events, err := calendarManager.GetAllEvents()
+	if err == nil {
+		cc.Data["Events"] = events
+		cc.TplName = "calendar.tpl"
 	} else {
 		fmt.Println(err)
 		cc.handleError(err)
