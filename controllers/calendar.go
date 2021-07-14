@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/beego/beego/v2/client/orm"
 	"github.com/beego/beego/v2/server/web"
+	"time"
 	"webTools/managers"
 	"webTools/models"
 )
@@ -43,8 +44,10 @@ func (cc *CalendarController) GetById() {
 func (cc *CalendarController) CreateCalendarEvent() {
 	calendarManager := new(managers.CalendarManagerImpl)
 	calendarEvent := models.CalendarEvent{}
-	cc.ParseForm(&calendarEvent)
 
+	cc.ParseForm(&calendarEvent)
+	localTime := cc.convertTime(cc.GetString("time"))
+	calendarEvent.Time = localTime
 	createErr := calendarManager.CreateCalendarEvent(calendarEvent)
 	if createErr == nil {
 		cc.loadPage()
@@ -67,10 +70,20 @@ func (cc *CalendarController) DeleteCalendarEvent() {
 	}
 }
 
+func (cc *CalendarController) convertTime(timeInput string) time.Time {
+	layout := "2006-01-02T15:04"
+	localTime, _ := time.ParseInLocation(layout, timeInput, time.Local)
+	return localTime
+}
+
 func (cc *CalendarController) loadPage() {
 	calendarManager := new(managers.CalendarManagerImpl)
 	events, err := calendarManager.GetAllEvents()
 	if err == nil {
+		for i := 0; i < len(events); i++ {
+			event := &events[i]
+			event.Time = event.Time.In(time.Local)
+		}
 		cc.Data["Events"] = events
 		cc.TplName = "calendar.tpl"
 	} else {

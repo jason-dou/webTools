@@ -16,11 +16,10 @@ func init() {
 	dbName, _ := web.AppConfig.String("dbname")
 	dataSource := fmt.Sprintf("%v:%v@/%v", dbUser, dbPassword, dbName)
 
-	orm.RegisterDriver("mysql", orm.DRMySQL)
-	orm.RegisterDataBase("default", "mysql", dataSource)
-
 	// Set to UTC time
 	orm.DefaultTimeLoc = time.UTC
+	orm.RegisterDriver("mysql", orm.DRMySQL)
+	orm.RegisterDataBase("default", "mysql", dataSource)
 }
 
 func main() {

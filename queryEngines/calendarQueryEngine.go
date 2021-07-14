@@ -19,7 +19,8 @@ type CalendarQueryEngine struct {
 
 func (queryEngine CalendarQueryEngine) GetAllCalendarEvents() ([]models.CalendarEvent, error) {
 	var events []models.CalendarEvent
-	_, err := queryEngine.Ormer.QueryTable("calendar_event").All(&events)
+	// Only getting active events
+	_, err := queryEngine.Ormer.QueryTable("calendar_event").Filter("active", true).All(&events)
 
 	return events, err
 }
@@ -33,13 +34,19 @@ func (queryEngine CalendarQueryEngine) GetCalendarEventById(id string) (models.C
 
 func (queryEngine CalendarQueryEngine) CreateCalendarEvent(event models.CalendarEvent) error {
 	event.Id = uuid.NewString()
+	event.Active = true
 	_, err := queryEngine.Ormer.Insert(&event)
 
 	return err
 }
 
 func (queryEngine CalendarQueryEngine) DeleteCalendarEvent(id string) error {
-	_, err := queryEngine.Ormer.Delete(&models.CalendarEvent{Id: id})
-
-	return err
+	event := models.CalendarEvent{Id: id}
+	readErr := queryEngine.Ormer.Read(&event)
+	if readErr == nil {
+		event.Active = false
+		_, err := queryEngine.Ormer.Update(&event, "active")
+		return err
+	}
+	return readErr
 }

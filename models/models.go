@@ -11,6 +11,7 @@ type CalendarEvent struct {
 	Location		string `form:"location"`
 	Attendee		string `form:"attendee"`
 	Time			time.Time `form:"time"`
+	Active			bool
 }
 
 func init() {
